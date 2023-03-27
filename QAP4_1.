@@ -1,0 +1,201 @@
+# TO BE A PRO--START PLANNING LIKE A PRO
+# QAP 4 Project 1
+# Raymond Payne
+# March 24, 2023
+import datetime
+
+
+def main():
+    # Read constants from OSICDef.dat file
+
+    f = open('OSICDef.dat', 'r')
+    POL_NUM = float(f.readline().strip())
+    BAS_PRE = float(f.readline().strip())
+    DIS_ADD_COV = float(f.readline().strip())
+    EXT_LIA_COV = float(f.readline().strip())
+    COS_GLASS_COV = float(f.readline().strip())
+    COS_LON_CAR_COV = float(f.readline().strip())
+    HST_RATE = float(f.readline().strip())
+    PRO_FEE_MON_PAY = float(f.readline().strip())
+    f.close()
+
+    # Required inputs
+    while True:
+        FirstNam = input("Enter the Customers first name: ").title()
+        if FirstNam == "":
+            print("First name cannot be blank( reenter): ")
+        else:
+            break
+
+    while True:
+        LastNam = input("Enter the Customers last name: ").title()
+        if LastNam == "":
+            print("Last name cannot be blank( reenter): ")
+        else:
+            break
+
+    while True:
+        StNam = input("Enter the Street name: ").title()
+        if StNam == "":
+            print("Street name cannot be blank( reenter): ")
+        else:
+            break
+    while True:
+        CityNam = input("Enter the City name: ").title()
+        if CityNam == "":
+            print("City name cannot be blank ( reenter): ")
+        else:
+            break
+
+    while True:
+        ProvNam = input("Enter the Province(Must be 2 letter from VALID_PROVINCES): ").upper()
+        ProvList = ["NL", "NS", "PE", "NB", "QC", "ON", "MB", "SK", "AB", "BC", "NT", "YT", "NU"]
+        if not ProvNam in ProvList:
+            print(" province name invalid....reenter: ")
+        else:
+            break
+
+    while True:
+        Postal_code = input('Enter a Canadian postal code (L0L0L0): ').upper()
+        Postal_code = Postal_code.replace('', "")
+        if len(Postal_code) == 6 and Postal_code[0].isalpha() and Postal_code[1].isdigit() and Postal_code[2].isalpha() and Postal_code[3].isdigit() and Postal_code[4].isalpha() and Postal_code[5].isdigit():
+            break
+        else:
+            print('Invalid postal code')
+            break
+
+    while True:
+        PhNum = input("Enter Customer phone number(must be 10 digits): ")
+        if PhNum == "":
+            print("Phone number cannot be blank -Please re-enter.")
+        elif len(PhNum) != 10:
+            print("Phone number must contain 10 digits - Please re-enter.")
+        elif PhNum.isdigit() == False:
+            print("Phone number must contain numbers only - Please re-enter.")
+        else:
+            break
+
+    NumCar = int(input("Enter the number of cars being insured: "))
+
+
+
+    while True:
+
+        ExtLiaIn = input("Enter optional insurance(must be 'Y' or 'N'): ").upper()
+        if ExtLiaIn == "Y":
+            ExtLiaIn = EXT_LIA_COV * NumCar
+            break
+        elif ExtLiaIn == "N":
+            ExtLiaIn = 0
+            break
+        else:
+            print("Optional Liability is invalid....reenter: ")
+
+    while True:
+        OptGlaCov = input("Enter optional glass coverage (must be 'Y' or 'N'): ").upper()
+        if OptGlaCov == 'Y':
+            OptGlaCov = COS_GLASS_COV * NumCar
+            break
+        elif OptGlaCov == 'N':
+            OptGlaCov = 0
+            break
+        else:
+            print("Optional glass coverage is invalid....reenter: ")
+    while True:
+        VehLonFee = input("Enter Vehicle loner fee (must be 'Y' or 'N'): ").upper()
+        if VehLonFee == "Y":
+            VehLonFee= COS_LON_CAR_COV * NumCar
+            break
+        elif VehLonFee == "N":
+            VehLonFee = 0
+            break
+        else:
+            print("Optional Loner coverage is invalid....reenter: ")
+    while True:
+        PayMeth = input("Enter optional payment method (must be 'F' or 'M'): ").upper()
+        if PayMeth == "M":
+            PayMeth = (39.00 / 12) * 8
+            break
+        elif PayMeth == "F":
+            PayMeth = 0
+            break
+        else:
+            print("Optional Payment method is invalid....reenter: ")
+
+    # Calculations
+    FullName = FirstNam + LastNam
+    FullCPP = f'{CityNam} {ProvNam} {Postal_code}'
+    InsPrem = BAS_PRE + (BAS_PRE * DIS_ADD_COV) * (NumCar - 1)
+    InsPremDsp = "${:,.2f}".format(InsPrem)
+    TotExtCos = ExtLiaIn + OptGlaCov + VehLonFee
+    TotExtCosDsp = "${:,.2f}".format(TotExtCos)
+    TotInsPre = InsPrem + TotExtCos + PayMeth
+    TotInsPreDsp = "${:,.2f}".format(TotInsPre)
+    HST = TotInsPre * HST_RATE
+    HSTDsp = "${:,.2f}".format(HST)
+    TotCusCos = TotInsPre + HST
+    TotCusCosDsp = "${:,.2f}".format(TotCusCos)
+    InvDate = datetime.datetime.today()
+    NexPayDate = datetime.date(InvDate.year, InvDate.month + 1, 1)
+
+    f = open('Policies.dat', 'w')
+    f.write("{}, ".format(str(POL_NUM)))
+    f.write("{}, ".format(InvDate))
+    f.write("{}, ".format(FirstNam))
+    f.write("{}, ".format(LastNam))
+    f.write("{}, ".format(str(StNam )))
+    f.write("{}, ".format(CityNam))
+    f.write("{}, ".format(ProvNam))
+    f.write("{}, ".format(str(Postal_code)))
+    f.write("{}, ".format(str(PhNum)))
+    f.write("{}, ".format(str(ExtLiaIn)))
+    f.write("{}, ".format(str(OptGlaCov)))
+    f.write("{}, ".format(str(VehLonFee)))
+    f.write("{}, ".format(str(PRO_FEE_MON_PAY )))
+    f.write("{}, ".format(str(NexPayDate)))
+    f.write("{}\n".format(str(TotCusCos)))
+    f.close()
+
+    # Display required Data
+    print()
+    print("Vehicle and Optional information successfully saved")
+    # This output section of data and receipt info
+    print("============================== ONE STOP INSURANCE COMPANY ==============================")
+    print()
+    print(f"       {FullName:} ")
+    print(f"       {FullCPP:} ")
+    print(f"       Phone Number: {PhNum:}")
+    print("========================================================================================")
+    print(f"     Insurance Premium                                   {InsPremDsp:>9s}")
+    print(f"     Total Extra Cost                                    {TotExtCosDsp:>9s}")
+    print(f' ' * 56, ("_" * 10))
+    print(f"     Total Insurance Premium                             {TotInsPreDsp:>9s}")
+    print(f"     Total HST                                           {HSTDsp:>9s}")
+    print(f"     Total Customer Cost                                 {TotCusCosDsp:>9s}")
+    print(f' ' * 56, ("_" * 10))
+    print(InvDate)
+    print(NexPayDate)
+
+
+
+
+    print("========================Thank-You ---ONE STOP INSURANCE COMPANY=======================")
+    POL_NUM += 1
+
+    Continue = input("Do you want to process another rental (Y/N): ")
+    if Continue != 'Y':
+        # Save
+        f = open('OSICDef.dat', 'w')
+        f.write("{}\n".format(POL_NUM))
+        f.write("{}\n".format(BAS_PRE))
+        f.write("{}\n".format(DIS_ADD_COV))
+        f.write("{}\n".format(EXT_LIA_COV))
+        f.write("{}\n".format(COS_GLASS_COV))
+        f.write("{}\n".format(COS_LON_CAR_COV))
+        f.write("{}\n".format(HST_RATE))
+        f.write("{}\n".format(PRO_FEE_MON_PAY))
+        f.close()
+
+if __name__ == "__main__":
+    main()
+
